@@ -4,7 +4,7 @@ steps:
   - name: 'gcr.io/cloud-builders/git'
     args: ['fetch','--unshallow']
   - name: 'gcr.io/cloud-builders/git'
-    args: ['checkout','${_BRANCH}']
+    args: ['checkout','${BRANCH_NAME}']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build','--no-cache','-t', 'gcr.io/$PROJECT_ID/${_IMG_NAME}']
   - name: 'gcr.io/cloud-builders/docker'
