@@ -22,7 +22,7 @@
 from argparse import ArgumentParser
 import logging
 
-import subprocess
+import pytest
 # from src.pipelines.train_pipeline import TrainingPipeline
 
 logging_map = {'info': logging.INFO
@@ -75,5 +75,4 @@ if __name__ == '__main__':
                             args.score_output_path)
 
     elif args.mode == 'test':
-        print("it_works")
-        subprocess.run(['pytest'])
+        pytest.main()
