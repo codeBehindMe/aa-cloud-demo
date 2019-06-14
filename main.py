@@ -23,7 +23,7 @@ from argparse import ArgumentParser
 import logging
 
 import pytest
-# from src.pipelines.train_pipeline import TrainingPipeline
+from src.pipelines.train_pipeline import TrainingPipeline
 
 logging_map = {'info': logging.INFO
     , 'debug': logging.DEBUG
@@ -63,10 +63,10 @@ if __name__ == '__main__':
         # FIXME: Use hierarchical argument parser.
         check_args_not_none(args.train_file_path, args.model_save_path)
 
-        # tr_pipe = TrainingPipeline(file_path=args.train_file_path
-        #                            , model_output_path=args.model_save_path)
-        #
-        # tr_pipe.execute()
+        tr_pipe = TrainingPipeline(file_path=args.train_file_path
+                                   , model_output_path=args.model_save_path)
+
+        tr_pipe.execute()
 
     elif args.mode == 'score':
         # FIXME: Use hierarchical argument parser.
