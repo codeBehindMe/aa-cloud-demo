@@ -76,4 +76,4 @@ if __name__ == '__main__':
 
     elif args.mode == 'test':
         print("it_works")
-        # subprocess.run(['pytest'])
+        subprocess.run(['pytest'])
