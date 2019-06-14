@@ -25,7 +25,7 @@ from apache_beam.io import ReadFromText
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 
-from src.model.aarons_xgb_model import AaronsAwesomeXgbModel
+from src.model.linear_model import LinearModelNoRegularisation
 
 
 class TrainingPipeline:
@@ -33,7 +33,7 @@ class TrainingPipeline:
     def __init__(self, file_path, model_output_path):
         self.file_path = file_path
         self.model_save_path = model_output_path
-        self.model = AaronsAwesomeXgbModel()
+        self.model = LinearModelNoRegularisation()
 
     def execute(self):
         """
