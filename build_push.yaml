@@ -6,8 +6,8 @@ steps:
   - name: 'gcr.io/cloud-builders/git'
     args: ['checkout','${BRANCH_NAME}']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build','--no-cache','-t', 'gcr.io/$PROJECT_ID/${_IMG_NAME}/${_IMG_ENV}','.']
+    args: ['build','--no-cache','-t', 'gcr.io/$PROJECT_ID/${_IMG_NAME}-${_IMG_ENV}','.']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/${_IMG_NAME}/${_IMG_ENV}']
+    args: ['push', 'gcr.io/$PROJECT_ID/${_IMG_NAME}-${_IMG_ENV}']
   - name: 'gcr.io/cloud-builders/gsutil'
     args: ['cp', 'orc_train_model.py' , '${_DAG_PATH}']
