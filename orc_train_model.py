@@ -26,7 +26,7 @@ from airflow.contrib.operators.kubernetes_pod_operator import \
 from datetime import datetime, timedelta
 
 # Constants
-IMAGE_NAME = "gcr.io/aa-cloud-demo/sample-model"
+IMAGE_NAME = "sample-model"
 IMAGE_ENTRY_COMMAND = "train"
 
 # noinspection PyPep8
