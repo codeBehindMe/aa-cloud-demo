@@ -78,6 +78,12 @@ if __name__ == '__main__':
                             args.score_output_path)
 
     elif args.mode == 'test':
-        for i in 10:
+        import time
+
+        i = 1
+        while True:
             print(f"hello {i}")
+            i += 1
+            time.sleep(5)
+
         # pytest.main(['-x', 'tests'])
