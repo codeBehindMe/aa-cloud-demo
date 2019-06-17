@@ -52,17 +52,3 @@ class TrainingPipeline:
 
         logging.info("Serialising model")
         self.model.serialise(self.model_save_path)
-
-
-
-
-def my_gs_writer_checker(f):
-    def wrapped(*args, **kwargs):
-        if args[0].startswith('gs:'):
-            print("caught it")
-        f(*args, **kwargs)
-    return wrapped
-
-@my_gs_writer_checker
-def my_writer(path):
-    print(path)
