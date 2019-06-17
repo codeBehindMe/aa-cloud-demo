@@ -58,13 +58,18 @@ def check_args_not_none(*args):
 
 if __name__ == '__main__':
     args = parser.parse_args()
+    logging.getLogger().setLevel(logging.INFO)
 
     if args.mode == 'train':
         # FIXME: Use hierarchical argument parser.
         check_args_not_none(args.train_file_path, args.model_save_path)
 
-        tr_pipe = TrainingPipeline(file_path=args.train_file_path
-                                   , model_output_path=args.model_save_path)
+        # FIXME: Constants for testing
+        gs_data_path = "gs://discovery-data-store/training-data-path/train.csv"
+        gs_model_path = "gs://discovery-data-store/models/model.mdl"
+
+        tr_pipe = TrainingPipeline(file_path=gs_data_path
+                                   , model_output_path=gs_model_path)
 
         tr_pipe.execute()
 

@@ -1,7 +1,6 @@
 google-cloud-storage
 apache-airflow
 pytest
-apache-beam
+apache-beam[gcp]
 scikit-learn
-xgboost
 pandas

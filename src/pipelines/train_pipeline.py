@@ -26,6 +26,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 
 from src.model.linear_model import LinearModelNoRegularisation
+import logging
 
 
 class TrainingPipeline:
@@ -46,6 +47,22 @@ class TrainingPipeline:
 
         with beam.Pipeline(options=p_opts) as p:
             p = p | ReadFromText(self.file_path)
+            p = p | beam.Map(lambda x: x.split(','))
             p = p | beam.Map(lambda x: self.model.train(x))
 
+        logging.info("Serialising model")
         self.model.serialise(self.model_save_path)
+
+
+
+
+def my_gs_writer_checker(f):
+    def wrapped(*args, **kwargs):
+        if args[0].startswith('gs:'):
+            print("caught it")
+        f(*args, **kwargs)
+    return wrapped
+
+@my_gs_writer_checker
+def my_writer(path):
+    print(path)

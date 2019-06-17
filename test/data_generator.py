@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     # Generate a file with data
 
-    i_max = 100000
+    i_max = 10000
     i = 0
     with open('train.csv', 'w+') as f:
         for instance in generate([2, 3, 4], 3, 3, 25):

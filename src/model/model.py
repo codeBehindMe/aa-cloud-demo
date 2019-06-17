@@ -21,6 +21,10 @@
 
 from abc import ABCMeta
 from abc import abstractmethod
+from functools import wraps
+import os
+from src.utils.gcs import upload_blob_from_file
+import logging
 
 
 class Model(metaclass=ABCMeta):
@@ -35,6 +39,34 @@ class Model(metaclass=ABCMeta):
     @abstractmethod
     def predict(self, data, *args, **kwargs):
         pass
+
+    @classmethod
+    def _gcs_write_handler(cls, f):
+        """
+        Handles a gcp path if required.
+        :return:
+        """
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            args_list = list(args)
+            if args_list[0].startswith("gs://"):  # FIXME: String in code
+                # If its a gcp url, write to local temporarily and then move
+                # it up to gcp.
+                local_path = "random_string_path.mdl"  # FIXME: A lot of things
+                args_list[0] = local_path
+                try:
+                    # Call self and persist locally.
+                    f(self, *args_list, **kwargs)
+                    upload_blob_from_file(args[0], local_path)
+                except IOError:
+                    logging.info(
+                        "Bad things happened wen trying to upload file")
+                finally:
+                    # Make sure to remove the temporary file.
+                    os.remove(local_path)
+                return
+            return f(self, *args, **kwargs)
+        return wrapper
 
     @abstractmethod
     def serialise(self, path):
