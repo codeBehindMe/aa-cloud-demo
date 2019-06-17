@@ -25,17 +25,13 @@ from airflow.contrib.operators.kubernetes_pod_operator import \
 
 from datetime import datetime, timedelta
 
-from airflow.models import Variable
-
 # Constants
 IMAGE_NAME = 'gcr.io/aa-cloud-demo/sample-model'
 IMAGE_ENTRY_COMMAND = 'train'
 
 # noinspection PyPep8
-TRAIN_DATA_COMMAND = f"""--train-file-path=gs://{Variable.get(
-    "env")}-data-store/training-data-path/"""
-MODEL_OUTPUT_PATH_COMMAND = f"""--model-save-path=gs:/{Variable.get(
-    "env")}-data-store/models/"""
+TRAIN_DATA_COMMAND = f"""--train-file-path=gs://discovery-data-store/training-data-path/"""
+MODEL_OUTPUT_PATH_COMMAND = f"""--model-save-path=gs:/discovery-data-store/models/"""
 
 # Default arguments for the dag.
 default_args = {
