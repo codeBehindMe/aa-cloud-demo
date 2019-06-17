@@ -67,4 +67,4 @@ with DAG(IMAGE_NAME, default_args=default_args,
         # qualified URLs will point to a custom repository. Supports private
         # gcr.io images if the Composer Environment is under the same
         # project-id as the gcr.io images.
-        image='gcr.io/aa-cloud-demo/sample-model')
+        image='gcr.io/aa-cloud-demo/sample_model_dev')
