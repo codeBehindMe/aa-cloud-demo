@@ -51,6 +51,8 @@ parser.add_argument('--log-level', action='store',
                              'critical'], default='info')
 
 
+# FIXME: Move to utilities.
+# FIXME: This shouldn't be handled lke this.
 def check_args_not_none(*args):
     if None in args:
         raise ValueError()
@@ -64,12 +66,8 @@ if __name__ == '__main__':
         # FIXME: Use hierarchical argument parser.
         check_args_not_none(args.train_file_path, args.model_save_path)
 
-        # FIXME: Constants for testing
-        gs_data_path = "gs://discovery-data-store/training-data-path/train.csv"
-        gs_model_path = "gs://discovery-data-store/models/model.mdl"
-
-        tr_pipe = TrainingPipeline(file_path=gs_data_path
-                                   , model_output_path=gs_model_path)
+        tr_pipe = TrainingPipeline(file_path=args.train_file_path
+                                   , model_output_path=args.model_save_path)
 
         tr_pipe.execute()
 
