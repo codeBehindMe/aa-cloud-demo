@@ -80,7 +80,7 @@ if __name__ == '__main__':
                 break
 
     i = 0
-    with open('test.csv', 'w+') as f:
+    with open('tests.csv', 'w+') as f:
         for instance in generate([2, 3, 4], 3, 3, 25):
             f.write(f"{','.join([str(x) for x in instance][:-1])}\n")
             i += 1
