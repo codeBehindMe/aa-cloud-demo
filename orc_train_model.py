@@ -53,6 +53,7 @@ with DAG(IMAGE_NAME, default_args=default_args,
         name=f"trainingtask",
         # Entrypoint of the container, if not specified the Docker container's
         # entrypoint is used. The cmds parameter is templated.
+        cmds=['test'],
         # cmds=[IMAGE_ENTRY_COMMAND, TRAIN_DATA_COMMAND
         #     , MODEL_OUTPUT_PATH_COMMAND],
         # The namespace to run within Kubernetes, default namespace is
@@ -66,4 +67,4 @@ with DAG(IMAGE_NAME, default_args=default_args,
         # qualified URLs will point to a custom repository. Supports private
         # gcr.io images if the Composer Environment is under the same
         # project-id as the gcr.io images.
-        image='tensorflow/tensorflow')
+        image='gcr.io/aa-cloud-demo/sample-model')
