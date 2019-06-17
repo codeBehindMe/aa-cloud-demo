@@ -48,9 +48,9 @@ with DAG(IMAGE_NAME, default_args=default_args,
          schedule_interval=None) as d:
     kubernetes_min_pod = KubernetesPodOperator(
         # The ID specified for the task.
-        task_id=f"trainingtask",
+        task_id=f"train-task-2",
         # Name of task you want to run, used to generate Pod ID.
-        name=f"trainingtask",
+        name=f"train-task-2",
         # Entrypoint of the container, if not specified the Docker container's
         # entrypoint is used. The cmds parameter is templated.
         cmds=['test'],
