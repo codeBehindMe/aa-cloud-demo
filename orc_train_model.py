@@ -45,12 +45,12 @@ default_args = {
 }
 
 with DAG(IMAGE_NAME, default_args=default_args,
-         schedule_interval=timedelta(days=1)) as d:
+         schedule_interval=None) as d:
     kubernetes_min_pod = KubernetesPodOperator(
         # The ID specified for the task.
-        task_id=f"training_task",
+        task_id=f"trainingtask",
         # Name of task you want to run, used to generate Pod ID.
-        name=f"training_task",
+        name=f"trainingtask",
         # Entrypoint of the container, if not specified the Docker container's
         # entrypoint is used. The cmds parameter is templated.
         cmds=[IMAGE_ENTRY_COMMAND, TRAIN_DATA_COMMAND
@@ -61,7 +61,7 @@ with DAG(IMAGE_NAME, default_args=default_args,
         # the recommended solution is to increase the amount of nodes in order
         # to satisfy the computing requirements. Alternatively, launching pods
         # into a custom namespace will stop fighting over resources.
-        namespace='default',
+        # namespace='default',
         # Docker image specified. Defaults to hub.docker.com, but any fully
         # qualified URLs will point to a custom repository. Supports private
         # gcr.io images if the Composer Environment is under the same
