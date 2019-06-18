@@ -26,12 +26,12 @@ from airflow.contrib.operators.kubernetes_pod_operator import \
 from datetime import datetime, timedelta
 
 # Constants
-IMAGE_NAME = "sample-model"
+IMAGE_NAME = "orc_train_model"
 IMAGE_ENTRY_COMMAND = "train"
 
 # noinspection PyPep8
-TRAIN_DATA_COMMAND = f"""--train-file-path=gs://discovery-data-store/training-data-path/"""
-MODEL_OUTPUT_PATH_COMMAND = f"""--model-save-path=gs:/discovery-data-store/models/"""
+TRAIN_DATA_COMMAND = """--train-file-path=gs://discovery-data-store/training-data-path/"""
+MODEL_OUTPUT_PATH_COMMAND = """--model-save-path=gs:/discovery-data-store/models/"""
 
 # Default arguments for the dag.
 default_args = {
@@ -47,24 +47,8 @@ default_args = {
 with DAG(IMAGE_NAME, default_args=default_args,
          schedule_interval=None) as d:
     kubernetes_min_pod = KubernetesPodOperator(
-        # The ID specified for the task.
-        task_id=f"train-task-2",
-        # Name of task you want to run, used to generate Pod ID.
-        name=f"train-task-2",
-        # Entrypoint of the container, if not specified the Docker container's
-        # entrypoint is used. The cmds parameter is templated.
-        cmds=['test'],
-        # cmds=[IMAGE_ENTRY_COMMAND, TRAIN_DATA_COMMAND
-        #     , MODEL_OUTPUT_PATH_COMMAND],
-        # The namespace to run within Kubernetes, default namespace is
-        # `default`. There is the potential for the resource starvation of
-        # Airflow workers and scheduler within the Cloud Composer environment,
-        # the recommended solution is to increase the amount of nodes in order
-        # to satisfy the computing requirements. Alternatively, launching pods
-        # into a custom namespace will stop fighting over resources.
         namespace='default',
-        # Docker image specified. Defaults to hub.docker.com, but any fully
-        # qualified URLs will point to a custom repository. Supports private
-        # gcr.io images if the Composer Environment is under the same
-        # project-id as the gcr.io images.
+        task_id="train-task",
+        name="train-task",
+        cmds=['test'],
         image='gcr.io/aa-cloud-demo/sample_model_dev')
