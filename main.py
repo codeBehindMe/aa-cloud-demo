@@ -64,26 +64,21 @@ if __name__ == '__main__':
 
     if args.mode == 'train':
         # FIXME: Use hierarchical argument parser.
-        check_args_not_none(args.train_file_path, args.model_save_path)
+        # check_args_not_none(args.train_file_path, args.model_save_path)
 
-        tr_pipe = TrainingPipeline(file_path=args.train_file_path
-                                   , model_output_path=args.model_save_path)
-
-        tr_pipe.execute()
+        # tr_pipe = TrainingPipeline(file_path=args.train_file_path
+        #                            , model_output_path=args.model_save_path)
+        #
+        # tr_pipe.execute()
+        print("training mode")
 
     elif args.mode == 'score':
         # FIXME: Use hierarchical argument parser.
 
-        check_args_not_none(args.scoring_file_path, args.model_path,
-                            args.score_output_path)
+        # check_args_not_none(args.scoring_file_path, args.model_path,
+        #                     args.score_output_path)
+        print("scoring mode")
 
     elif args.mode == 'test':
-        import time
 
-        i = 1
-        while True:
-            print(f"hello {i}")
-            i += 1
-            time.sleep(5)
-
-        # pytest.main(['-x', 'tests'])
+        print("test mode")
