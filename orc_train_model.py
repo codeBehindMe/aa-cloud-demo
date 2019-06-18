@@ -26,7 +26,7 @@ from airflow.contrib.operators.kubernetes_pod_operator import \
 from datetime import datetime, timedelta
 
 # Constants
-IMAGE_NAME = "orc_train_model"
+DAG_NAME = "orc_train_model"
 IMAGE_ENTRY_COMMAND = "train"
 
 # noinspection PyPep8
@@ -44,11 +44,11 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-with DAG(IMAGE_NAME, default_args=default_args,
+with DAG(DAG_NAME, default_args=default_args,
          schedule_interval=None) as d:
     kubernetes_min_pod = KubernetesPodOperator(
         namespace='default',
         task_id="train-task",
         name="train-task",
-        cmds=['test'],
+        arguments=['test'],
         image='gcr.io/aa-cloud-demo/sample_model_dev')
