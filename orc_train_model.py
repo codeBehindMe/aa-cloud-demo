@@ -30,7 +30,7 @@ DAG_NAME = "orc_train_model"
 IMAGE_ENTRY_COMMAND = "train"
 
 # noinspection PyPep8
-TRAIN_DATA_COMMAND = """--train-file-path=gs://discovery-data-store/training-data-path/"""
+TRAIN_DATA_COMMAND = """--train-file-path=gs://discovery-data-store/training-data-path/train.csv"""
 MODEL_OUTPUT_PATH_COMMAND = """--model-save-path=gs:/discovery-data-store/models/"""
 
 # Default arguments for the dag.
