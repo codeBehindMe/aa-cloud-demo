@@ -31,7 +31,7 @@ IMAGE_ENTRY_COMMAND = "train"
 
 # noinspection PyPep8
 TRAIN_DATA_COMMAND = """--train-file-path=gs://discovery-data-store/training-data-path/train.csv"""
-MODEL_OUTPUT_PATH_COMMAND = """--model-save-path=gs:/discovery-data-store/models/"""
+MODEL_OUTPUT_PATH_COMMAND = """--model-save-path=gs://discovery-data-store/models/"""
 
 # Default arguments for the dag.
 default_args = {
@@ -40,7 +40,7 @@ default_args = {
     'start_date': datetime(2015, 6, 1),
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 1,
+    'retries': 0,
     'retry_delay': timedelta(minutes=5),
 }
 
