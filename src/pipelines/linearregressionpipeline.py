@@ -1,4 +1,4 @@
-# train_pipeline.py
+# demopipeline.py
 
 # Author : aarontillekeratne
 # Date : 2019-06-13
@@ -19,22 +19,32 @@
 # along with aa-cloud-demo.  
 # If not, see <https://www.gnu.org/licenses/>.
 
-import apache_beam as beam
-from apache_beam.io import ReadFromText
-
-from apache_beam.options.pipeline_options import PipelineOptions
-from apache_beam.options.pipeline_options import SetupOptions
-
-from src.model.linear_model import LinearModelNoRegularisation
 import logging
 
+import apache_beam as beam
+from apache_beam.io import ReadFromText
+from apache_beam.options.pipeline_options import PipelineOptions
+from apache_beam.options.pipeline_options import SetupOptions
+from apache_beam.io import WriteToText
 
-class TrainingPipeline:
+from src.model.linear_model import LinearModelNoRegularisation
+from src.pipelines.mlpipeline import MLPipeline
+from src.pipelines.mlpipeline import ModelModeKey
+from src.pipelines.mlpipeline import PersistenceModeKey
 
-    def __init__(self, file_path, model_output_path):
+
+class LinearRegressionPipeline(MLPipeline):
+
+    def __init__(self, file_path, model_path, model_mode, pers_mode,
+                 output_path=None):
+        super().__init__(model_mode, pers_mode)
         self.file_path = file_path
-        self.model_save_path = model_output_path
+        self.model_path = model_path
         self.model = LinearModelNoRegularisation()
+        self.output_path = output_path
+
+        if self.model_mode == ModelModeKey.SCORE or self.model_mode == ModelModeKey.VALIDATION:
+            pass
 
     def execute(self):
         """
@@ -48,7 +58,13 @@ class TrainingPipeline:
         with beam.Pipeline(options=p_opts) as p:
             p = p | ReadFromText(self.file_path)
             p = p | beam.Map(lambda x: x.split(','))
-            p = p | beam.Map(lambda x: self.model.train(x))
+            if self.model_mode == ModelModeKey.TRAIN:
+                p = p | beam.Map(lambda x: self.model.train(x))
+            if self.model_mode == ModelModeKey.SCORE:
+                p = p | beam.Map(lambda x: self.model.predict(x))
+                if self.pers_mode == PersistenceModeKey.WET:
+                    p | WriteToText(self.output_path)
 
-        logging.info("Serialising model")
-        self.model.serialise(self.model_save_path)
+        if self.pers_mode == PersistenceModeKey.WET:
+            logging.info("Serialising model")
+            self.model.serialise(self.model_path)
