@@ -96,7 +96,24 @@ class Model(metaclass=ABCMeta):
             f_name = f"{ts}_{cls_name}"
             args_list[0] = os.path.join(args[0], f_name)
             return f(self, *args_list, **kwargs)
+
         return wrapper
+
+    @classmethod
+    def _gcs_read_handler(cls, f):
+        """
+        Hanldles when reading from gcs.
+        :param f:
+        :return:
+        """
+
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            args_list = list(args)
+
+            # FIXME: String in code.
+            if args[0].startswith('gs://'):
+                raise NotImplementedError()
 
     @abstractmethod
     def serialise(self, path):

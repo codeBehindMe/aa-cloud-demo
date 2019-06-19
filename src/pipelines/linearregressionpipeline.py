@@ -26,6 +26,7 @@ from apache_beam.io import ReadFromText
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from apache_beam.io import WriteToText
+from apache_beam.transforms import BatchElements
 
 from src.model.linear_model import LinearModelNoRegularisation
 from src.pipelines.mlpipeline import MLPipeline
@@ -58,6 +59,7 @@ class LinearRegressionPipeline(MLPipeline):
         with beam.Pipeline(options=p_opts) as p:
             p = p | ReadFromText(self.file_path)
             p = p | beam.Map(lambda x: x.split(','))
+            # p = p | BatchElements(10, 100)
             if self.model_mode == ModelModeKey.TRAIN:
                 p = p | beam.Map(lambda x: self.model.train(x))
             if self.model_mode == ModelModeKey.SCORE:

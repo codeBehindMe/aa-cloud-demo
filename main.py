@@ -79,6 +79,13 @@ if __name__ == '__main__':
 
         check_args_not_none(args.scoring_file_path, args.model_path,
                             args.score_output_path)
+        score_pipe = \
+            LinearRegressionPipeline(file_path=args.train_file_path
+                                     , model_path=args.model_save_path
+                                     , model_mode=ModelModeKey.SCORE
+                                     , pers_mode=PersistenceModeKey.WET
+                                     , output_path=args.score_output_path)
+        score_pipe.execute()
 
     elif args.mode == 'test':
         pytest.main(['-x', 'tests'])

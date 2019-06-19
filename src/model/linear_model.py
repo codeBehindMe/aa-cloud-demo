@@ -56,6 +56,7 @@ class LinearModelNoRegularisation(Model):
         joblib.dump(self._estimator, path)
 
     def deserialise(self, path):
+        raise NotImplementedError()
         self._estimator = joblib.load(path)
 
     def get_estimator(self):
