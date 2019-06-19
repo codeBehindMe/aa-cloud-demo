@@ -25,6 +25,7 @@ from functools import wraps
 import os
 from src.utils.gcs import upload_blob_from_file
 import logging
+import datetime
 
 
 class Model(metaclass=ABCMeta):
@@ -42,30 +43,59 @@ class Model(metaclass=ABCMeta):
 
     @classmethod
     def _gcs_write_handler(cls, f):
+        # FIXME: Is this the best way to do this?
         """
         Handles a gcp path if required.
         :return:
         """
+
         @wraps(f)
         def wrapper(self, *args, **kwargs):
             args_list = list(args)
             if args_list[0].startswith("gs://"):  # FIXME: String in code
                 # If its a gcp url, write to local temporarily and then move
                 # it up to gcp.
-                local_path = "random_string_path.mdl"  # FIXME: A lot of things
+                local_path = os.path.basename(args[0])
                 args_list[0] = local_path
                 try:
                     # Call self and persist locally.
                     f(self, *args_list, **kwargs)
                     upload_blob_from_file(args[0], local_path)
                 except IOError:
+                    # FIXME: Bad logging info.
                     logging.info(
-                        "Bad things happened wen trying to upload file")
+                        "Bad things happened when trying to upload file")
                 finally:
                     # Make sure to remove the temporary file.
                     os.remove(local_path)
                 return
             return f(self, *args, **kwargs)
+
+        return wrapper
+
+    @classmethod
+    def _default_name_handler(cls, f):
+        # FIXME: Is this the best way to do this?
+        """
+        If an explicit model name isn't given, this generates a model name
+        to be written.
+        :param f:
+        :return:
+        """
+
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            # If the base name is defined, no action required.
+            if os.path.basename(args[0]) != '':
+                return f(self, *args, **kwargs)
+
+            # Else generate a filename
+            args_list = list(args)
+            cls_name = self.__class__.__name__
+            ts = round(datetime.datetime.now().timestamp())
+            f_name = f"{ts}_{cls_name}"
+            args_list[0] = os.path.join(args[0], f_name)
+            return f(self, *args_list, **kwargs)
         return wrapper
 
     @abstractmethod

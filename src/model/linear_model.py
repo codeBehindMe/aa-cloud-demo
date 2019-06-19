@@ -20,13 +20,10 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
-from functools import wraps
-import os
 import logging
 from sklearn.linear_model import SGDRegressor
 from sklearn.externals import joblib
 from src.model.model import Model
-from src.utils.gcs import upload_blob_from_file
 
 import numpy as np
 
@@ -42,15 +39,18 @@ class LinearModelNoRegularisation(Model):
     def train(self, data, *args, **kwargs):
         x = data[: -1]  # Features are everything but the last element.
         y = np.array(data[-1]).reshape(-1)  # Last element is the label.
-
         x = np.array(x).reshape(1, -1)
 
         logging.info(f"fitting x: {x} y: {y}")
         self._estimator.partial_fit(x, y)
 
     def predict(self, data, *args, **kwargs):
-        return self._estimator.predict(data)
+        x = data[: -1]  # Features are everything but the last element.
 
+        logging.info(f"predicting x: {x}")
+        return self._estimator.predict(x)
+
+    @Model._default_name_handler
     @Model._gcs_write_handler
     def serialise(self, path):
         joblib.dump(self._estimator, path)

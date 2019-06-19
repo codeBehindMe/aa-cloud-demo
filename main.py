@@ -23,7 +23,8 @@ from argparse import ArgumentParser
 import logging
 
 import pytest
-from src.pipelines.train_pipeline import TrainingPipeline
+from src.pipelines.linearregressionpipeline import LinearRegressionPipeline
+from src.pipelines.mlpipeline import ModelModeKey, PersistenceModeKey
 
 logging_map = {'info': logging.INFO
     , 'debug': logging.DEBUG
@@ -66,8 +67,10 @@ if __name__ == '__main__':
         # FIXME: Use hierarchical argument parser.
         check_args_not_none(args.train_file_path, args.model_save_path)
 
-        tr_pipe = TrainingPipeline(file_path=args.train_file_path
-                                   , model_output_path=args.model_save_path)
+        tr_pipe = LinearRegressionPipeline(file_path=args.train_file_path
+                                           , model_path=args.model_save_path
+                                           , model_mode=ModelModeKey.TRAIN
+                                           , pers_mode=PersistenceModeKey.WET)
 
         tr_pipe.execute()
 
@@ -78,5 +81,4 @@ if __name__ == '__main__':
                             args.score_output_path)
 
     elif args.mode == 'test':
-
-        print("test mode")
+        pytest.main(['-x', 'tests'])

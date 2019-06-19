@@ -1,7 +1,7 @@
-# orchestration.py
+# orc_score_model.py
 
 # Author : aarontillekeratne
-# Date : 2019-06-12
+# Date : 2019-06-17
 
 # This file is part of aa-cloud-demo.
 
@@ -22,19 +22,16 @@
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import \
     KubernetesPodOperator
-from airflow.models import Variable
 
 from datetime import datetime, timedelta
 
 # Constants
-DAG_NAME = "orc_train_model"
-IMAGE_ENTRY_COMMAND = "train"
+SERVICE_NAME = 'gcr.io/aa-cloud-demo/sample_model_dev:latest'
+IMAGE_ENTRY_COMMAND = 'score'
 
-# Environment
-env_id = Variable.get("env")
-# noinspection PyPep8
-TRAIN_DATA_COMMAND = f"""--train-file-path=gs://{env_id}-data-store/training-data-path/train.csv"""
-MODEL_OUTPUT_PATH_COMMAND = f"""--model-save-path=gs://{env_id}-data-store/models/"""
+# FIXME: Incorrect scoring data path
+SCORE_DATA_COMMAND = "--scoring-file-path=gs//discovery-data-store/training-data-path/train.csv"
+DAG_NAME = 'orc_score_model'
 
 # Default arguments for the dag.
 default_args = {
@@ -43,15 +40,15 @@ default_args = {
     'start_date': datetime(2015, 6, 1),
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 0,
+    'retries': 1,
     'retry_delay': timedelta(minutes=5),
 }
 
 with DAG(DAG_NAME, default_args=default_args,
-         schedule_interval=None) as d:
+         schedule_interval=timedelta(days=1)) as d:
     kubernetes_min_pod = KubernetesPodOperator(
+        task_id="scoring_task",
+        name="scoring_task",
         namespace='default',
-        task_id="train-task",
-        name="train-task",
-        arguments=['train', TRAIN_DATA_COMMAND, MODEL_OUTPUT_PATH_COMMAND],
-        image='gcr.io/aa-cloud-demo/sample_model_dev:latest')
+        image=SERVICE_NAME)
+
