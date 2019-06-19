@@ -51,4 +51,4 @@ with DAG(DAG_NAME, default_args=default_args,
         task_id="train-task",
         name="train-task",
         arguments=['train', TRAIN_DATA_COMMAND, MODEL_OUTPUT_PATH_COMMAND],
-        image='gcr.io/aa-cloud-demo/sample_model_dev')
+        image='gcr.io/aa-cloud-demo/sample_model_dev:latest')
