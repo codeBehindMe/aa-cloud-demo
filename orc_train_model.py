@@ -22,6 +22,7 @@
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import \
     KubernetesPodOperator
+from airflow.models import Variable
 
 from datetime import datetime, timedelta
 
@@ -29,9 +30,11 @@ from datetime import datetime, timedelta
 DAG_NAME = "orc_train_model"
 IMAGE_ENTRY_COMMAND = "train"
 
+# Environment
+env_id = Variable.get("env")
 # noinspection PyPep8
-TRAIN_DATA_COMMAND = """--train-file-path=gs://discovery-data-store/training-data-path/train.csv"""
-MODEL_OUTPUT_PATH_COMMAND = """--model-save-path=gs://discovery-data-store/models/"""
+TRAIN_DATA_COMMAND = f"""--train-file-path=gs://{env_id}-data-store/training-data-path/train.csv"""
+MODEL_OUTPUT_PATH_COMMAND = f"""--model-save-path=gs://{env_id}-data-store/models/"""
 
 # Default arguments for the dag.
 default_args = {
