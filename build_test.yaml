@@ -8,4 +8,4 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build','--no-cache','-t', 'gcr.io/$PROJECT_ID/${_IMG_NAME}/${_IMG_ENV}','.']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['run', 'gcr.io/$PROJECT_ID/${_IMG_NAME}/${_IMG_ENV}', 'tests']
+    args: ['run', 'gcr.io/$PROJECT_ID/${_IMG_NAME}/${_IMG_ENV}', 'test']
