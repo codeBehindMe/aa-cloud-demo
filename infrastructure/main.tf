@@ -10,6 +10,7 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count = 1
   network = google_compute_network.vpc_network.self_link
+  subnetwork = google_compute_subnetwork.kube-subnet.self_link
 
   master_auth {
     username = ""
@@ -44,7 +45,18 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 
 resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
-  auto_create_subnetworks = "true"
+  auto_create_subnetworks = false
 
 }
 
+resource "google_compute_subnetwork" "kube-subnet" {
+  name = "kube-subnet"
+  ip_cidr_range = "10.2.0.0/16"
+  region = var.deploy_region
+
+  network = google_compute_network.vpc_network.self_link
+  secondary_ip_range {
+    ip_cidr_range = "192.168.10.0/24"
+    range_name = "kube-pod-ip-range"
+  }
+}
