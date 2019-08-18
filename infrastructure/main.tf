@@ -1,5 +1,5 @@
 provider "google" {
-  project = "aa-cc-dem"
+  project = var.target_project
   region = var.deploy_region
   zone = var.deploy_zone
 }
@@ -58,5 +58,17 @@ resource "google_compute_subnetwork" "kube-subnet" {
   secondary_ip_range {
     ip_cidr_range = "192.168.10.0/24"
     range_name = "kube-pod-ip-range"
+  }
+}
+
+resource "google_compute_subnetwork" "qa-airflow" {
+  ip_cidr_range = "10.3.0.0/16"
+  name = "qa-airflow"
+  region = var.deploy_region
+
+  network = google_compute_network.vpc_network.self_link
+  secondary_ip_range {
+    ip_cidr_range = "172.16.1.0/24"
+    range_name = "airflow-worker-ip-range"
   }
 }
