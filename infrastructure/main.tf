@@ -51,18 +51,18 @@ resource "google_compute_network" "vpc_network" {
 
 resource "google_compute_subnetwork" "kube-subnet" {
   name = "kube-subnet"
-  ip_cidr_range = "10.2.0.0/16"
+  ip_cidr_range = "10.0.0.0/16"
   region = var.deploy_region
 
   network = google_compute_network.vpc_network.self_link
   secondary_ip_range {
-    ip_cidr_range = "192.168.10.0/24"
+    ip_cidr_range = "172.16.0.0/24"
     range_name = "kube-pod-ip-range"
   }
 }
 
 resource "google_compute_subnetwork" "qa-airflow" {
-  ip_cidr_range = "10.3.0.0/16"
+  ip_cidr_range = "10.1.0.0/16"
   name = "qa-airflow"
   region = var.deploy_region
 
