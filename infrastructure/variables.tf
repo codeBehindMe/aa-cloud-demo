@@ -4,9 +4,9 @@ variable "target_project" {
 }
 variable "deploy_zone" {
   type = string
-  default = "australia-southeast1-c"
+  default = "us-central1-c"
 }
 variable "deploy_region" {
   type = string
-  default = "australia-southeast1"
+  default = "us-central1"
 }
