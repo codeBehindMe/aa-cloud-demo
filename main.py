@@ -67,12 +67,14 @@ if __name__ == '__main__':
 
     if args.mode == 'train':
         # FIXME: Use hierarchical argument parser.
-        check_args_not_none(args.train_file_path, args.model_save_path)
+        check_args_not_none(args.train_file_path, args.model_save_path
+                            , args.beam_runner)
 
         tr_pipe = LinearRegressionPipeline(file_path=args.train_file_path
                                            , model_path=args.model_save_path
                                            , model_mode=ModelModeKey.TRAIN
-                                           , pers_mode=PersistenceModeKey.WET)
+                                           , pers_mode=PersistenceModeKey.WET
+                                           , beam_runner=args.beam_runner)
 
         tr_pipe.execute()
 
@@ -80,13 +82,14 @@ if __name__ == '__main__':
         # FIXME: Use hierarchical argument parser.
 
         check_args_not_none(args.scoring_file_path, args.model_path,
-                            args.score_output_path)
+                            args.score_output_path, args.beam_runner)
         score_pipe = \
             LinearRegressionPipeline(file_path=args.train_file_path
                                      , model_path=args.model_save_path
                                      , model_mode=ModelModeKey.SCORE
                                      , pers_mode=PersistenceModeKey.WET
-                                     , output_path=args.score_output_path)
+                                     , output_path=args.score_output_path
+                                     , beam_runner=args.beam_runner)
         score_pipe.execute()
 
     elif args.mode == 'test':
