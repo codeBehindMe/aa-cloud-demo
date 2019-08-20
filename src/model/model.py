@@ -102,7 +102,7 @@ class Model(metaclass=ABCMeta):
     @classmethod
     def _gcs_read_handler(cls, f):
         """
-        Hanldles when reading from gcs.
+        Handles when reading from gcs.
         :param f:
         :return:
         """
