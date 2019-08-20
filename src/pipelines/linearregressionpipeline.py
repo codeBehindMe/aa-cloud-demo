@@ -32,19 +32,21 @@ from src.model.linear_model import LinearModelNoRegularisation
 from src.pipelines.mlpipeline import MLPipeline
 from src.pipelines.mlpipeline import ModelModeKey
 from src.pipelines.mlpipeline import PersistenceModeKey
+from src.utils.beam_utils import beam_runner_args_parser
 
 
 class LinearRegressionPipeline(MLPipeline):
 
     def __init__(self, file_path, model_path, model_mode, pers_mode,
-                 output_path=None):
-        super().__init__(model_mode, pers_mode)
+                 beam_runner, output_path=None):
+        super().__init__(model_mode, pers_mode, beam_runner)
         self.file_path = file_path
         self.model_path = model_path
         self.model = LinearModelNoRegularisation()
         self.output_path = output_path
 
-        if self.model_mode == ModelModeKey.SCORE or self.model_mode == ModelModeKey.VALIDATION:
+        if self.model_mode == ModelModeKey.SCORE or \
+                self.model_mode == ModelModeKey.VALIDATION:
             pass
 
     def execute(self):
@@ -53,7 +55,7 @@ class LinearRegressionPipeline(MLPipeline):
         :return:
         """
 
-        p_opts = PipelineOptions(['--runner=DirectRunner'])
+        p_opts = PipelineOptions([beam_runner_args_parser(self.beam_runner)])
         p_opts.view_as(SetupOptions).save_main_session = True
 
         with beam.Pipeline(options=p_opts) as p:

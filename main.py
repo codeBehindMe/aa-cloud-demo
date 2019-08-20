@@ -51,6 +51,8 @@ parser.add_argument('--log-level', action='store',
                     choices=['debug', 'info', 'warn', 'error',
                              'critical'], default='info')
 
+parser.add_argument('--beam-runner', action='store')
+
 
 # FIXME: Move to utilities.
 # FIXME: This shouldn't be handled lke this.

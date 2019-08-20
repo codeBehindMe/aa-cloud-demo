@@ -38,9 +38,10 @@ class PersistenceModeKey(Enum):
 
 class MLPipeline(metaclass=ABCMeta):
 
-    def __init__(self, model_mode, pers_mode):
+    def __init__(self, model_mode, pers_mode, beam_runner):
         self.model_mode = model_mode
         self.pers_mode = pers_mode
+        self.beam_runner = beam_runner
 
     @abstractmethod
     def execute(self):
