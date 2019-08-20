@@ -38,10 +38,13 @@ class PersistenceModeKey(Enum):
 
 class MLPipeline(metaclass=ABCMeta):
 
-    def __init__(self, model_mode, pers_mode, beam_runner):
+    def __init__(self, model_mode, pers_mode, beam_runner, max_batch_size,
+                 min_batch_size):
         self.model_mode = model_mode
         self.pers_mode = pers_mode
         self.beam_runner = beam_runner
+        self.max_batch_size = max_batch_size
+        self.min_batch_size = min_batch_size
 
     @abstractmethod
     def execute(self):

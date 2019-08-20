@@ -52,6 +52,8 @@ parser.add_argument('--log-level', action='store',
                              'critical'], default='info')
 
 parser.add_argument('--beam-runner', action='store')
+parser.add_argument('--max-batch-size', action='store', type=int, default=-1)
+parser.add_argument('--min-batch-size', action='store', type=int, default=1)
 
 
 # FIXME: Move to utilities.

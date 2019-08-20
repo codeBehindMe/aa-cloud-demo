@@ -38,8 +38,10 @@ from src.utils.beam_utils import beam_runner_args_parser
 class LinearRegressionPipeline(MLPipeline):
 
     def __init__(self, file_path, model_path, model_mode, pers_mode,
-                 beam_runner, output_path=None):
-        super().__init__(model_mode, pers_mode, beam_runner)
+                 beam_runner, max_batch_size, min_batch_size,
+                 output_path=None):
+        super().__init__(model_mode, pers_mode, beam_runner, max_batch_size,
+                         min_batch_size)
         self.file_path = file_path
         self.model_path = model_path
         self.model = LinearModelNoRegularisation()
@@ -61,7 +63,8 @@ class LinearRegressionPipeline(MLPipeline):
         with beam.Pipeline(options=p_opts) as p:
             p = p | ReadFromText(self.file_path)
             p = p | beam.Map(lambda x: x.split(','))
-            # p = p | BatchElements(10, 100)
+            if not self.max_batch_size == -1:
+                p = p | BatchElements(self.min_batch_size, self.max_batch_size)
             if self.model_mode == ModelModeKey.TRAIN:
                 p = p | beam.Map(lambda x: self.model.train(x))
             if self.model_mode == ModelModeKey.SCORE:
