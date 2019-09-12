@@ -32,20 +32,32 @@ from src.model.linear_model import LinearModelNoRegularisation
 from src.pipelines.mlpipeline import MLPipeline
 from src.pipelines.mlpipeline import ModelModeKey
 from src.pipelines.mlpipeline import PersistenceModeKey
+from src.utils.beam_utils import beam_runner_args_parser
+
+
+class TrainModel(beam.DoFn):
+
+    def __init__(self, model, *unused_args, **unused_kwargs):
+        super().__init__(*unused_args, **unused_kwargs)
+        self._model = model
+
+    def process(self, element, *args, **kwargs):
+        self._model.train(element)
 
 
 class LinearRegressionPipeline(MLPipeline):
 
     def __init__(self, file_path, model_path, model_mode, pers_mode,
+                 beam_runner, max_batch_size, min_batch_size,
                  output_path=None):
-        super().__init__(model_mode, pers_mode)
+        super().__init__(model_mode, pers_mode, beam_runner, max_batch_size,
+                         min_batch_size)
         self.file_path = file_path
         self.model_path = model_path
         self.model = LinearModelNoRegularisation()
+        if model_mode == ModelModeKey.SCORE:
+            self.model.deserialise(model_path)
         self.output_path = output_path
-
-        if self.model_mode == ModelModeKey.SCORE or self.model_mode == ModelModeKey.VALIDATION:
-            pass
 
     def execute(self):
         """
@@ -53,13 +65,14 @@ class LinearRegressionPipeline(MLPipeline):
         :return:
         """
 
-        p_opts = PipelineOptions(['--runner=DirectRunner'])
+        p_opts = PipelineOptions([beam_runner_args_parser(self.beam_runner)])
         p_opts.view_as(SetupOptions).save_main_session = True
 
         with beam.Pipeline(options=p_opts) as p:
             p = p | ReadFromText(self.file_path)
             p = p | beam.Map(lambda x: x.split(','))
-            # p = p | BatchElements(10, 100)
+            if not self.max_batch_size == -1:
+                p = p | BatchElements(self.min_batch_size, self.max_batch_size)
             if self.model_mode == ModelModeKey.TRAIN:
                 p = p | beam.Map(lambda x: self.model.train(x))
             if self.model_mode == ModelModeKey.SCORE:
@@ -67,6 +80,7 @@ class LinearRegressionPipeline(MLPipeline):
                 if self.pers_mode == PersistenceModeKey.WET:
                     p | WriteToText(self.output_path)
 
-        if self.pers_mode == PersistenceModeKey.WET:
+        if self.pers_mode == PersistenceModeKey.WET and \
+                self.model_mode == ModelModeKey.TRAIN:
             logging.info("Serialising model")
             self.model.serialise(self.model_path)
