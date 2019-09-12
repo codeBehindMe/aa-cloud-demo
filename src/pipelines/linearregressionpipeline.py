@@ -35,6 +35,16 @@ from src.pipelines.mlpipeline import PersistenceModeKey
 from src.utils.beam_utils import beam_runner_args_parser
 
 
+class TrainModel(beam.DoFn):
+
+    def __init__(self, model, *unused_args, **unused_kwargs):
+        super().__init__(*unused_args, **unused_kwargs)
+        self._model = model
+
+    def process(self, element, *args, **kwargs):
+        self._model.train(element)
+
+
 class LinearRegressionPipeline(MLPipeline):
 
     def __init__(self, file_path, model_path, model_mode, pers_mode,
@@ -45,11 +55,9 @@ class LinearRegressionPipeline(MLPipeline):
         self.file_path = file_path
         self.model_path = model_path
         self.model = LinearModelNoRegularisation()
+        if model_mode == ModelModeKey.SCORE:
+            self.model.deserialise(model_path)
         self.output_path = output_path
-
-        if self.model_mode == ModelModeKey.SCORE or \
-                self.model_mode == ModelModeKey.VALIDATION:
-            pass
 
     def execute(self):
         """
@@ -72,6 +80,7 @@ class LinearRegressionPipeline(MLPipeline):
                 if self.pers_mode == PersistenceModeKey.WET:
                     p | WriteToText(self.output_path)
 
-        if self.pers_mode == PersistenceModeKey.WET:
+        if self.pers_mode == PersistenceModeKey.WET and \
+                self.model_mode == ModelModeKey.TRAIN:
             logging.info("Serialising model")
             self.model.serialise(self.model_path)

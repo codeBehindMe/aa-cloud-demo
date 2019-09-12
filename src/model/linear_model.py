@@ -34,7 +34,7 @@ class LinearModelNoRegularisation(Model):
 
     def __init__(self):
         super().__init__()
-        self._estimator = SGDRegressor()
+        self._estimator = SGDRegressor(warm_start=True)
 
     def train(self, data, *args, **kwargs):
         x = data[: -1]  # Features are everything but the last element.
@@ -45,10 +45,11 @@ class LinearModelNoRegularisation(Model):
         self._estimator.partial_fit(x, y)
 
     def predict(self, data, *args, **kwargs):
-        x = data[: -1]  # Features are everything but the last element.
-
-        logging.info(f"predicting x: {x}")
-        return self._estimator.predict(x)
+        # Features are everything but the last element.
+        x = np.array(data).reshape(1, -1).astype(np.float64)
+        y_hat = self._estimator.predict(x)
+        logging.info(f"prediction for x: {x} is {y_hat}")
+        return y_hat
 
     @Model._default_name_handler
     @Model._gcs_write_handler
@@ -56,8 +57,8 @@ class LinearModelNoRegularisation(Model):
         joblib.dump(self._estimator, path)
 
     def deserialise(self, path):
-        raise NotImplementedError()
-        self._estimator = joblib.load(path)
+        with open(path, 'rb') as f:
+            self._estimator = joblib.load(f)
 
     def get_estimator(self):
         return self._estimator
